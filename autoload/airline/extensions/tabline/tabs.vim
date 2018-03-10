@@ -25,6 +25,18 @@ function! airline#extensions#tabline#tabs#invalidate()
   let s:current_bufnr = -1
 endfunction
 
+function! s:get_tabs()
+  let tablist = range(1, tabpagenr('$'))
+  let curbuf = bufnr('%')
+  if get(g:, 'airline#extensions#tabline#current_first', 0)
+    if index(tablist, curtab) > -1
+      call remove(tablist, index(tablist, curtab))
+    endif
+    let tablist = [curtab] + tablist
+  endif
+  return tablist
+endfunction
+
 function! airline#extensions#tabline#tabs#get()
   let curbuf = bufnr('%')
   let curtab = tabpagenr()
@@ -44,14 +56,7 @@ function! airline#extensions#tabline#tabs#get()
 
   call airline#extensions#tabline#add_label(b, 'tabs')
   " always have current tabpage first
-  let tablist = range(1, tabpagenr('$'))
-  if get(g:, 'airline#extensions#tabline#current_first', 0)
-    if index(tablist, curtab) > -1
-      call remove(tablist, index(tablist, curtab))
-    endif
-    let tablist = [curtab] + tablist
-  endif
-  for i in tablist
+  for i in s:get_tabs()
     if i == curtab
       let group = 'airline_tabsel'
       if g:airline_detect_modified
