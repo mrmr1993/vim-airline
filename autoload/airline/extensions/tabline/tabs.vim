@@ -41,7 +41,7 @@ function! s:get_visible_tabs(width, titles)
   let max_width = 0
 
   for title in a:titles
-    let width = strlen(s:evaluate_tabline(title))
+    let width = strlen(s:evaluate_tabline(title)) + 1
     let total_width += width
     let max_width = max([max_width, width])
   endfor
@@ -147,7 +147,7 @@ function! airline#extensions#tabline#tabs#get()
     call add(tab_titles, val.'%'.i.'T %{airline#extensions#tabline#title('.i.')} %)')
   endfor
 
-  for i in s:get_visible_tabs(&columns - strlen(b_tabline) - 2, tab_titles)
+  for i in s:get_visible_tabs(&columns - strlen(b_tabline), tab_titles)
     if i < 0
       call b.insert_raw('%#airline_tab#...', tabs_position)
       let tabs_position += 1
