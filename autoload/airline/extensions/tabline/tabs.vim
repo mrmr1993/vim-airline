@@ -40,8 +40,8 @@ function! s:get_visible_tabs(width, titles)
   let total_width = 0
   let max_width = 0
 
-  for nr in tablist
-    let width = strlen(s:evaluate_tabline(get(a:titles, nr, '')))
+  for title in a:titles
+    let width = strlen(s:evaluate_tabline(title))
     let total_width += width
     let max_width = max([max_width, width])
   endfor
@@ -167,7 +167,7 @@ function! airline#extensions#tabline#tabs#get()
       let group = 'airline_tab'
     endif
 
-    call b.insert_section(group, get(tab_titles, i, ''), tabs_position)
+    call b.insert_section(group, get(tab_titles, i-1, ''), tabs_position)
     let tabs_position += 1
   endfor
 
