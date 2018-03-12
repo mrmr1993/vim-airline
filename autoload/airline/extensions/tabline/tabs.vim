@@ -103,23 +103,6 @@ function! airline#extensions#tabline#tabs#get()
 
   call airline#extensions#tabline#add_label(b, 'tabs')
 
-  let tabs_width = &columns
-
-  if get(g:, 'airline#extensions#tabline#show_splits', 1) == 1
-    let buffers = tabpagebuflist(curtab)
-    for nr in buffers
-      let tabs_width -= airline#extensions#tabline#get_buffer_name(nr) + 2
-    endfor
-  endif
-  if get(g:, 'airline#extensions#tabline#show_close_button', 1)
-    " strlen(' X ')
-    let tabs_width -= 3
-  endif
-  if get(g:, 'airline#extensions#tabline#show_tab_type', 1)
-    " strlen(' tabs ') + strlen(' buffers ')
-    let tabs_width -= 15
-  endif
-
   let tabs_position = b.get_position()
 
   call b.add_section('airline_tabfill', '')
@@ -140,7 +123,15 @@ function! airline#extensions#tabline#tabs#get()
     call airline#extensions#tabline#add_label(b, 'buffers')
   endif
 
-  for i in s:get_visible_tabs(tabs_width)
+  let b_tabline = b.build()
+  let b_tabline = substitute(b_tabline, '%{\([^}]\+\)}', '\=eval(submatch(1))', 'g')
+  let b_tabline = substitute(b_tabline, '%#[^#]\+#', '', 'g')
+  let b_tabline = substitute(b_tabline, '%(\([^)]\+\))', '\1', 'g')
+  let b_tabline = substitute(b_tabline, '%\d\+[TX]', '', 'g')
+  let b_tabline = substitute(b_tabline, '%=', '', 'g')
+  let b_tabline = substitute(b_tabline, '%\d*\*', '', 'g')
+
+  for i in s:get_visible_tabs(&columns - strlen(b_tabline))
     if i < 0
       call b.insert_raw('%#airline_tab#...', tabs_position)
       let tabs_position += 1
