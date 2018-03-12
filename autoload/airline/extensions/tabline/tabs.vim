@@ -102,7 +102,25 @@ function! airline#extensions#tabline#tabs#get()
   let b = airline#extensions#tabline#new_builder()
 
   call airline#extensions#tabline#add_label(b, 'tabs')
-  for i in s:get_visible_tabs(&columns)
+
+  let tabs_width = &columns
+
+  if get(g:, 'airline#extensions#tabline#show_splits', 1) == 1
+    let buffers = tabpagebuflist(curtab)
+    for nr in buffers
+      let tabs_width -= airline#extensions#tabline#get_buffer_name(nr) + 2
+    endfor
+  endif
+  if get(g:, 'airline#extensions#tabline#show_close_button', 1)
+    " strlen(' X ')
+    let tabs_width -= 3
+  endif
+  if get(g:, 'airline#extensions#tabline#show_tab_type', 1)
+    " strlen(' tabs ') + strlen(' buffers ')
+    let tabs_width -= 15
+  endif
+
+  for i in s:get_visible_tabs(tabs_width)
     if i < 0
       call b.add_raw('%#airline_tab#...')
       continue
