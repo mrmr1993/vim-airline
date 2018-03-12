@@ -28,7 +28,9 @@ endfunction
 function! s:get_visible_tabs()
   let tablist = range(1, tabpagenr('$'))
   let curbuf = bufnr('%')
+
   if get(g:, 'airline#extensions#tabline#current_first', 0)
+    " always have current tabpage first
     if index(tablist, curtab) > -1
       call remove(tablist, index(tablist, curtab))
     endif
@@ -101,7 +103,6 @@ function! airline#extensions#tabline#tabs#get()
   let b = airline#extensions#tabline#new_builder()
 
   call airline#extensions#tabline#add_label(b, 'tabs')
-  " always have current tabpage first
   for i in s:get_visible_tabs()
     if i < 0
       call b.add_raw('%#airline_tab#...')
